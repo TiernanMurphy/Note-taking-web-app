@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.http import JsonResponse
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import json
 
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
@@ -137,3 +141,22 @@ def edit_entry(request, entry_id):
 
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)
+
+
+@csrf_exempt
+@require_POST
+@login_required
+def reorder_topics(request):
+    """Handle drag and drop reordering of topics"""
+    try:
+        data = json.loads(request.body)
+        topic_ids = data.get('topic_ids', [])
+
+        # Update order field for each topic
+        for index, topic_id in enumerate(topic_ids):
+            Topic.objects.filter(id=topic_id).update(order=index)
+
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+

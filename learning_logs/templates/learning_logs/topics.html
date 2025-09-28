@@ -1,32 +1,36 @@
 {% extends "learning_logs/base.html" %}
 
 {% block page_header %}
-  <h1>Topics</h1>
+    <h1>Topics</h1>
 {% endblock page_header %}
 
 {% block content %}
     <div class="container">
-        {% for topic in topics %}
-            <div class="topic-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5><a href="{% url 'learning_logs:topic' topic.id %}">{{ topic.text }}</a></h5>
-                    <small class="text-muted">{{ topic.date_added|date:'M d, Y H:i' }}</small>
+        <div id="topics-container">
+            {% for topic in topics %}
+                <div class="topic-item d-flex justify-content-between align-items-center"
+                     data-topic-id="{{ topic.id }}" draggable="true">
+                    <div>
+                        <h5><a href="{% url 'learning_logs:topic' topic.id %}">{{ topic.text }}</a></h5>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <small style="margin-right: 20px; color: gray;">{{ topic.date_added|date:'n/j/Y' }}</small>
+                        <div class="topic-actions">
+                            <a href="{% url 'learning_logs:edit_topic' topic.id %}" class="btn btn-sm btn-outline-secondary" title="Edit topic name">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'learning_logs:delete_topic' topic.id %}" class="btn btn-sm btn-outline-danger" title="Delete topic">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="topic-actions">
-                    <a href="{% url 'learning_logs:edit_topic' topic.id %}" class="btn btn-sm btn-outline-secondary" title="Edit topic name">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="{% url 'learning_logs:delete_topic' topic.id %}" class="btn btn-sm btn-outline-danger" title="Delete topic">
-                        <i class="fas fa-trash"></i>
-                    </a>
+            {% empty %}
+                <div class="alert alert-info">
+                    <h5>No topics have been added yet.</h5>
                 </div>
-            </div>
-
-        {% empty %}
-            <div class="alert alert-info">
-                <h5>No topics have been added yet.</h5>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
 
         <div class="mt-4">
             <a href="{% url 'learning_logs:new_topic' %}" class="btn btn-primary">
@@ -34,4 +38,159 @@
             </a>
         </div>
     </div>
+
+    <style>
+    .topic-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
+        cursor: move;
+    }
+
+    .topic-item:hover {
+        background-color: #e9ecef;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .topic-item.dragging {
+        opacity: 0.6;
+    }
+
+    .topic-item.drag-over-top {
+        border-top: 3px solid #007bff;
+    }
+
+    .topic-item.drag-over-bottom {
+        border-bottom: 3px solid #007bff;
+    }
+
+    .topic-actions .btn {
+        margin-left: 5px;
+    }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('topics-container');
+        let draggedElement = null;
+
+        const topicItems = container.querySelectorAll('.topic-item');
+
+        topicItems.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragover', handleDragOver);
+            item.addEventListener('dragenter', handleDragEnter);
+            item.addEventListener('dragleave', handleDragLeave);
+            item.addEventListener('drop', handleDrop);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            if (this !== draggedElement) {
+                const rect = this.getBoundingClientRect();
+                const midpoint = rect.top + rect.height / 2;
+
+                this.classList.remove('drag-over-top', 'drag-over-bottom');
+
+                if (e.clientY < midpoint) {
+                    this.classList.add('drag-over-top');
+                } else {
+                    this.classList.add('drag-over-bottom');
+                }
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (!this.contains(e.relatedTarget)) {
+                this.classList.remove('drag-over-top', 'drag-over-bottom');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+
+            if (draggedElement && this !== draggedElement) {
+                const rect = this.getBoundingClientRect();
+                const midpoint = rect.top + rect.height / 2;
+
+                if (e.clientY < midpoint) {
+                    // Insert before this element
+                    container.insertBefore(draggedElement, this);
+                } else {
+                    // Insert after this element
+                    container.insertBefore(draggedElement, this.nextSibling);
+                }
+
+                saveOrder();
+            }
+
+            this.classList.remove('drag-over-top', 'drag-over-bottom');
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+
+            document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
+                el.classList.remove('drag-over-top', 'drag-over-bottom');
+            });
+        }
+
+        function saveOrder() {
+            const topicIds = Array.from(container.querySelectorAll('.topic-item')).map(item =>
+                item.getAttribute('data-topic-id')
+            );
+
+            fetch('/reorder_topics/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    topic_ids: topicIds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Error saving order:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+    </script>
 {% endblock content %}
