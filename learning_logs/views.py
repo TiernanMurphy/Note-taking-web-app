@@ -42,6 +42,26 @@ def delete_topic(request, topic_id):
 
 
 @login_required
+def edit_topic(request, topic_id):
+    """Edit an existing topic"""
+    topic = get_object_or_404(Topic, id=topic_id)
+
+    if request.method != 'POST':
+        # Initial request; pre-fill form with the current template
+        form = TopicForm(instance=topic)
+    else:
+        # POST data submitted; process data
+        form = TopicForm(instance=topic, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('learning_logs:topics')
+
+    # Display a blank or invalid form
+    context = {'topic': topic, 'form': form}
+    return render(request, 'learning_logs/edit_topic.html', context)
+
+
+@login_required
 def topic(request, topic_id):
     """Show a single topic and all its entries"""
     topic = Topic.objects.get(id=topic_id)
