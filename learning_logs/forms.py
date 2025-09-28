@@ -13,6 +13,6 @@ class TopicForm(forms.ModelForm):
 class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
-        fields = ['text']
-        labels = {'text': 'Entry:'}
+        fields = ['title', 'text']
+        labels = {'title': 'Title', 'text': 'Entry:'}
         widgets = {'text': forms.Textarea(attrs={'cols': 80, 'spellcheck': 'false'})}
