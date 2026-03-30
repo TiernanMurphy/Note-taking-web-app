@@ -1,1 +1,1 @@
-web: gunicorn learning_log.wsgi __log-file -
+web: python manage.py migrate && gunicorn learning_log.wsgi
