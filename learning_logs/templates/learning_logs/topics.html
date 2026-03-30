@@ -129,10 +129,8 @@
                 const midpoint = rect.top + rect.height / 2;
 
                 if (e.clientY < midpoint) {
-                    // Insert before this element
                     container.insertBefore(draggedElement, this);
                 } else {
-                    // Insert after this element
                     container.insertBefore(draggedElement, this.nextSibling);
                 }
 
