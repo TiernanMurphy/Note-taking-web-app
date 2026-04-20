@@ -13,6 +13,53 @@
             role="button">Register &raquo;</a>
     </div> -->
 
+    <!-- makeshift styling for now -->
+     <style>
+        img {
+            height: 300px;
+            width: auto;
+            padding: 20px 15px;
+        }
+
+        .books-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            justify-content: center;
+        }
+
+        .book-card {
+            border: 1px solid #5b595c;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 200px;
+            height: auto;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            border-color: #a9dc76;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .book-card a {
+            display: block;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.2s;
+        }
+     </style>
+
     <!-- starter pdf grid -->
     <div class="books-grid">
 
