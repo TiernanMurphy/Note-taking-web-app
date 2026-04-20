@@ -58,10 +58,18 @@
             display: block;
             transition: opacity 0.2s;
         }
+
+        .row-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin: 1.5rem 0 0.6rem 0.2rem;
+        }
+
      </style>
 
-    <!-- starter pdf grid -->
-     <p class="row-label">Python Programming</p>
+    <!-- grid of books -->
+    <p class="row-label">Python Programming</p>
     <div class="books-grid">
         <div class="book-card">
             <a href="{% static 'python_crash_course.pdf' %}">
@@ -86,6 +94,35 @@
         <div class="book-card">
             <a href="{% static 'fluent_python.pdf' %}">
                 <img src="{% static 'fluent_python.jpg' %}" alt="Fluent Python">
+            </a>
+        </div>
+    </div>
+
+    <p class="row-label">Business and Entrepreneurship</p>
+    <div class="books-grid">
+        <div class="book-card">
+            <a href="{% static 'zero_to_one.pdf' %}">
+                <img src="{% static 'zero_to_one.webp' %}" alt="Zero to One">
+            </a>
+        </div>
+        <div class="book-card">
+            <a href="{% static 'blue_ocean_strategy.pdf' %}">
+                <img src="{% static 'blue_ocean_strategy.webp' %}" alt="Python for Data Analysis">
+            </a>
+        </div>
+        <div class="book-card">
+            <a href="{% static 'built_to_last.pdf' %}">
+                <img src="{% static 'built_to_last.png' %}" alt="Automate the Boring Stuff with Python">
+            </a>
+        </div>
+        <div class="book-card">
+            <a href="{% static 'good_to_great.pdf' %}">
+                <img src="{% static 'good_to_great.jpg' %}" alt="Introduction to Machine Learning with Python">
+            </a>
+        </div>
+        <div class="book-card">
+            <a href="{% static 'millionaire_fastlane.pdf' %}">
+                <img src="{% static 'millionaire_fastlane.jpg' %}" alt="Fluent Python">
             </a>
         </div>
     </div>
