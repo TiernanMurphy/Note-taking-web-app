@@ -21,11 +21,6 @@ STATICFILES_DIRS = [
     BASE_DIR / 'pdfs',
 ]
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-g18mb5%7b_=18uij#j%ha+zh+ifz61$os+0&z-c2#cgiw@=9wi"
 
 # SECURITY WARNING: don't run with debug turned on in production!
