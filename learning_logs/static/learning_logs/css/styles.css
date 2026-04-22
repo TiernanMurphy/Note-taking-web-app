@@ -48,3 +48,48 @@ img {
     letter-spacing: 0.1em;
     margin: 1.5rem 0 0.6rem 0.2rem;
 }
+
+.topic-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+}
+
+.topic-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.topic-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+}
+
+.topic-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.nav-link {
+    color: black !important;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: royalblue !important;
+}

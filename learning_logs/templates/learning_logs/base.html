@@ -1,4 +1,5 @@
 <!-- Styling & Deploying App Section Changes -->
+ {% load static %}
 {% load bootstrap4 %}
 <html lang="en">
 <head>
@@ -6,41 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Learning Log</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .topic-item {
-            padding: 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background-color: #f8f9fa;
-        }
-        .topic-actions {
-            display: flex;
-            gap: 5px;
-        }
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='full' %}
 </head>
-
 <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
-        <a class="navbar-brand" href="{% url 'learning_logs:index'%}">
-            Learning Log</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarCollapse" aria-controls="navbarCollapse"
-                aria-expanded="false" aria-label="Toggle navigation">
+        <a class="nav-link {% if request.path == '/' %}active{% endif %}"
+            href="{% url 'learning_logs:index' %}">Books</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'learning_logs:topics'%}">Topics</a>
+                    <a class="nav-link {% if '/topics' in request.path %}active{% endif %}"
+                        href="{% url 'learning_logs:topics' %}">Entries</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -62,16 +47,16 @@
 
     <!-- Messages Section  -->
     {% if messages %}
-        <div class="container">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
     <main role="main" class="container">
@@ -83,4 +68,5 @@
         </div>
     </main>
 </body>
+
 </html>

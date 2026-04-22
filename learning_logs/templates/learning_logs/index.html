@@ -3,7 +3,7 @@
 
 {% block page_header %}
 <link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
-<!-- links look messy, but it's Django convention -->
+
 <!-- grid of books -->
 <p class="row-label">Python Programming</p>
 <div class="books-grid">
@@ -89,6 +89,15 @@
     <div class="book-card">
         <a href="{% static 'learning_logs/pdfs/millionaire_fastlane.pdf' %}" target="_blank">
             <img src="{% static 'learning_logs/img/millionaire_fastlane.jpg' %}" alt="The Millionaire Fastlane">
+        </a>
+    </div>
+</div>
+
+<p class="row-label">Investing & Personal Finance</p>
+<div class="books-grid">
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/psychology_of_money.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/psychology_of_money.jpg' %}" alt="Psychology of Money">
         </a>
     </div>
 </div>
