@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +21,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-SECRET_KEY = "django-insecure-g18mb5%7b_=18uij#j%ha+zh+ifz61$os+0&z-c2#cgiw@=9wi"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
