@@ -17,13 +17,15 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# for finding assets on filesystem 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# turn this off for users
 DEBUG = True
 
 ALLOWED_HOSTS = ['web-production-876d7.up.railway.app', 'localhost', '127.0.0.1']
@@ -31,9 +33,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web-production-876d7.up.railway.app', 
 ]
 
-
-# Application definition
-
+# application definition
 INSTALLED_APPS = [
     # My apps
     'learning_logs',
@@ -81,9 +81,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "learning_log.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# sets default database to sqlite
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -92,9 +90,7 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
+# password authentication
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -116,22 +112,20 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Los_Angeles"
 
+# enables characters for translation to different languages
 USE_I18N = True
 
+# switch to user's time zone
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
+# for urls
 STATIC_URL = "static/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
+# safe default for long entries (not really necessary)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# My settings
+
 LOGIN_URL = 'users:login'
