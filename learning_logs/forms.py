@@ -15,4 +15,4 @@ class EntryForm(forms.ModelForm):
         model = Entry
         fields = ['title', 'text']
         labels = {'title': 'Title', 'text': 'Entry:'}
-        widgets = {'text': forms.Textarea(attrs={'cols': 80, 'spellcheck': 'false'})}
+        widgets = {'text': forms.Textarea(attrs={'rows': 22, 'cols': 110, 'spellcheck': 'false'})}
