@@ -9,6 +9,7 @@ import json
 
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
+from django.db.models import Max
 
 
 # Create your views here.
@@ -20,7 +21,7 @@ def index(request):
 @login_required
 def topics(request):
     """Show all topics"""
-    topics = Topic.objects.filter(owner=request.user)
+    topics = Topic.objects.filter(owner=request.user).order_by('order')
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)
 
@@ -90,6 +91,8 @@ def new_topic(request):
         if form.is_valid():
             new_topic = form.save(commit=False)
             new_topic.owner = request.user
+            last_order = Topic.objects.filter(owner=request.user).aggregate(Max('order'))['order__max']
+            new_topic.order = (last_order or 0) + 1
             new_topic.save()
             return redirect('learning_logs:topics')
 
