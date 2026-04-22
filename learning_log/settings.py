@@ -11,14 +11,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'img',
-    BASE_DIR / 'pdfs',
+    BASE_DIR / 'static',
 ]
 
 SECRET_KEY = "django-insecure-g18mb5%7b_=18uij#j%ha+zh+ifz61$os+0&z-c2#cgiw@=9wi"

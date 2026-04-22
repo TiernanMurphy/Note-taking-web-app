@@ -2,129 +2,95 @@
 {% load static %}
 
 {% block page_header %}
-    <!-- <div class="jumbotron">
-        <h1 class="display-3">Track your learning.</h1>
-
-        <p class="lead">Make your own Learning Log, and keep a list of the
-            topics you're learning about. Whenever you learn something new
-            about a topic, makee an entry summarizing what you've learned.</p>
-
-        <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
-            role="button">Register &raquo;</a>
-    </div> -->
-
-    <!-- makeshift styling for now -->
-     <style>
-        img {
-            height: 300px;
-            width: auto;
-            padding: 20px 15px;
-        }
-
-        .books-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            justify-content: center;
-        }
-
-        .book-card {
-            border: 1px solid #5b595c;
-            border-radius: 8px;
-            overflow: hidden;
-            width: 200px;
-            height: auto;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-            flex-shrink: 0;
-        }
-
-        .book-card:hover {
-            transform: translateY(-4px);
-            border-color: #a9dc76;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .book-card a {
-            display: block;
-            width: 100%;
-            height: 280px;
-            overflow: hidden;
-        }
-
-        .book-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: opacity 0.2s;
-        }
-
-        .row-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin: 1.5rem 0 0.6rem 0.2rem;
-        }
-
-     </style>
-
-    <!-- grid of books -->
-    <p class="row-label">Python Programming</p>
-    <div class="books-grid">
-        <div class="book-card">
-            <a href="{% static 'python_crash_course.pdf' %}">
-                <img src="{% static 'python_crash_course.jpeg' %}" alt="Python Crash Course">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'python_for_data_analysis.pdf' %}">
-                <img src="{% static 'python_for_data_analysis.jpg' %}" alt="Python for Data Analysis">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'automate_python.pdf' %}">
-                <img src="{% static 'automate_python.jpg' %}" alt="Automate the Boring Stuff with Python">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'oreilly_ml_python.pdf' %}">
-                <img src="{% static 'oreilly_ml_python.jpg' %}" alt="Introduction to Machine Learning with Python">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'fluent_python.pdf' %}">
-                <img src="{% static 'fluent_python.jpg' %}" alt="Fluent Python">
-            </a>
-        </div>
+<link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
+<!-- links look messy, but it's Django convention -->
+<!-- grid of books -->
+<p class="row-label">Python Programming</p>
+<div class="books-grid">
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/python_crash_course.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/python_crash_course.jpeg' %}" alt="Python Crash Course">
+        </a>
     </div>
-
-    <p class="row-label">Business and Entrepreneurship</p>
-    <div class="books-grid">
-        <div class="book-card">
-            <a href="{% static 'zero_to_one.pdf' %}">
-                <img src="{% static 'zero_to_one.webp' %}" alt="Zero to One">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'blue_ocean_strategy.pdf' %}">
-                <img src="{% static 'blue_ocean_strategy.webp' %}" alt="Python for Data Analysis">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'built_to_last.pdf' %}">
-                <img src="{% static 'built_to_last.png' %}" alt="Automate the Boring Stuff with Python">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'good_to_great.pdf' %}">
-                <img src="{% static 'good_to_great.jpg' %}" alt="Introduction to Machine Learning with Python">
-            </a>
-        </div>
-        <div class="book-card">
-            <a href="{% static 'millionaire_fastlane.pdf' %}">
-                <img src="{% static 'millionaire_fastlane.jpg' %}" alt="Fluent Python">
-            </a>
-        </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/python_for_data_analysis.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/python_for_data_analysis.jpg' %}" alt="Python for Data Analysis">
+        </a>
     </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/automate_python.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/automate_python.jpg' %}" alt="Automate the Boring Stuff with Python">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/oreilly_ml_python.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/oreilly_ml_python.jpg' %}"
+                alt="Introduction to Machine Learning with Python">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/fluent_python.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/fluent_python.jpg' %}" alt="Fluent Python">
+        </a>
+    </div>
+</div>
+
+<p class="row-label">C and Linux</p>
+<div class="books-grid">
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/c_programming_language.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/c_programming_language.jpg' %}" alt="The C Programming Language">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/cathedral_bazaar.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/cathedral_bazaar.jpg' %}" alt="The Cathedral and the Bazaar">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/linux_command_line.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/linux_command_line.jpg' %}" alt="The Linux Command Line">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/linux_admin.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/linux_admin.jpg' %}" alt="Linux and System Administration">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/unix_programming.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/unix_programming.png' %}" alt="The Art of Unix Programming">
+        </a>
+    </div>
+</div>
+
+<p class="row-label">Business and Entrepreneurship</p>
+<div class="books-grid">
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/zero_to_one.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/zero_to_one.webp' %}" alt="Zero to One">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/blue_ocean_strategy.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/blue_ocean_strategy.webp' %}" alt="Blue Ocean Strategy">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/built_to_last.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/built_to_last.png' %}" alt="Built to Last">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/good_to_great.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/good_to_great.jpg' %}" alt="Good to Great">
+        </a>
+    </div>
+    <div class="book-card">
+        <a href="{% static 'learning_logs/pdfs/millionaire_fastlane.pdf' %}" target="_blank">
+            <img src="{% static 'learning_logs/img/millionaire_fastlane.jpg' %}" alt="The Millionaire Fastlane">
+        </a>
+    </div>
+</div>
 
 {% endblock page_header %}
