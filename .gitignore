@@ -3,5 +3,6 @@ __pycache__/
 *.sqlite3
 .DS_Store
 static/
+staticfiles/
 .env
 db.sqlite3

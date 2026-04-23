@@ -31,7 +31,7 @@ DEBUG = True
 
 # just for testing, obviously not safe
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://note-taking-web-app-production.up.railway.app/']
+CSRF_TRUSTED_ORIGINS = ['https://note-taking-web-app-production.up.railway.app']
 
 # application definition
 INSTALLED_APPS = [
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,6 +61,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = "learning_log.urls"
 
@@ -82,12 +86,14 @@ WSGI_APPLICATION = "learning_log.wsgi.application"
 
 
 # sets default database to PostgreSQL
-if os.environ.get('DATABASE_URL'):
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
     DATABASES = {
-        "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.config(default=DATABASE_URL)
     }
 else:
-    DATABASE = {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
