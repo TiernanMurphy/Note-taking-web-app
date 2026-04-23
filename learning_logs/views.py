@@ -11,35 +11,23 @@ from .forms import TopicForm, EntryForm
 from django.db.models import Max, Q
 
 
-# Create your views here.
 def index(request):
     """The home page for Learning Log."""
-    query = request.GET.get('q', '').strip()
-    
     genre_order = [
         'Python Programming',
-        'C and Linux', 
+        'C and Linux',
         'Business & Entrepreneurship',
         'Investing & Personal Finance',
         'Productivity & Self Development',
     ]
 
-    if query:
-        books = Book.objects.filter(
-            Q(title__icontains=query) |
-            Q(author__icontains=query) |
-            Q(genre__icontains=query)
-        )
-        context = {'books': books, 'query': query, 'genre_order': genre_order}
-    else:
-        # Group books manually in the correct order
-        grouped_books = []
-        for genre in genre_order:
-            genre_books = Book.objects.filter(genre=genre)
-            if genre_books.exists():
-                grouped_books.append({'genre': genre, 'books': genre_books})
-        context = {'grouped_books': grouped_books, 'query': query}
-    
+    grouped_books = []
+    for genre in genre_order:
+        genre_books = Book.objects.filter(genre=genre)
+        if genre_books.exists():
+            grouped_books.append({'genre': genre, 'books': genre_books})
+
+    context = {'grouped_books': grouped_books}
     return render(request, 'learning_logs/index.html', context)
 
 

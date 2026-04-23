@@ -5,52 +5,56 @@
 <link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
 
 {% if not user.is_authenticated %}
-<a class="btn btn-lg btn-primary" href="{% url 'users:register' %}" role="button">Register &raquo;</a>
+    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}" role="button">Register &raquo;</a>
 {% endif %}
 
-<!-- Bootstrap search bar -->
-<form method="GET" action="{% url 'learning_logs:index' %}" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="Search by title, author, or genre..."
-            value="{{ query }}">
-        <button class="btn btn-primary" type="submit">Search</button>
-        {% if query %}
-        <a href="{% url 'learning_logs:index' %}" class="btn btn-outline-secondary">Clear</a>
-        {% endif %}
-    </div>
-</form>
-
-{% if query %}
-<p class="text-muted">{{ books.count }} result{{ books.count|pluralize }} for "<strong>{{ query }}</strong>"</p>
-{% endif %}
-
-{% if query %}
-<!-- Flat grid for search results, no genre grouping -->
-<div class="books-grid">
-    {% for book in books %}
-    <div class="book-card">
-        <a href="{% static book.get_pdf_url %}" target="_blank">
-            <img src="{% static book.get_img_url %}" alt="{{ book.title }}">
-        </a>
-    </div>
-    {% empty %}
-    <p class="text-muted">No books found for "{{ query }}".</p>
-    {% endfor %}
+<!-- Search input -->
+<div class="input-group mb-4">
+    <input type="text" id="book-search" class="form-control" placeholder="Search by title, author, or genre...">
 </div>
 
-{% else %}
+<!-- Grouped books -->
 {% for group in grouped_books %}
-<p class="row-label">{{ group.genre }}</p>
-<div class="books-grid">
-    {% for book in group.books %}
-    <div class="book-card">
-        <a href="{% static book.get_pdf_url %}" target="_blank">
-            <img src="{% static book.get_img_url %}" alt="{{ book.title }}">
-        </a>
+    <p class="row-label">{{ group.genre }}</p>
+    <div class="books-grid">
+        {% for book in group.books %}
+            <div class="book-card"
+                data-title="{{ book.title|lower }}"
+                data-author="{{ book.author|lower }}"
+                data-genre="{{ book.genre|lower }}">
+                <a href="{% static book.get_pdf_url %}" target="_blank">
+                    <img src="{% static book.get_img_url %}" alt="{{ book.title }}">
+                </a>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 {% endfor %}
-{% endif %}
+
+<script>
+    const searchInput = document.getElementById('book-search');
+    const bookCards = document.querySelectorAll('.book-card');
+    const rowLabels = document.querySelectorAll('.row-label');
+    const grids = document.querySelectorAll('.books-grid');
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.toLowerCase().trim();
+
+        bookCards.forEach(card => {
+            const title = card.dataset.title.toLowerCase();
+            const author = card.dataset.author.toLowerCase();
+            const genre = card.dataset.genre.toLowerCase();
+            const match = title.includes(query) || author.includes(query) || genre.includes(query);
+            card.style.display = match ? '' : 'none';
+        });
+
+        // Hide genre labels and grids if all their books are hidden
+        grids.forEach((grid, i) => {
+            const visibleCards = grid.querySelectorAll('.book-card:not([style*="display: none"])');
+            const hidden = visibleCards.length === 0;
+            grid.style.display = hidden ? 'none' : '';
+            rowLabels[i].style.display = hidden ? 'none' : '';
+        });
+    });
+</script>
 
 {% endblock page_header %}
