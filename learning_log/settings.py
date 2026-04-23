@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 import dj_database_url
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # for finding assets on filesystem 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-]
+] if (BASE_DIR / 'static').exists() else []
 
 load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -31,7 +31,7 @@ DEBUG = True
 
 # just for testing, obviously not safe
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://note-taking-web-app-production.up.railway.app/']
 
 # application definition
 INSTALLED_APPS = [
@@ -81,12 +81,18 @@ TEMPLATES = [
 WSGI_APPLICATION = "learning_log.wsgi.application"
 
 
-# sets default database to sqlite
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
-}
+# sets default database to PostgreSQL
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    }
+else:
+    DATABASE = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # password authentication
