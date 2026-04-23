@@ -4,6 +4,11 @@
 {% block page_header %}
 <link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
 
+{% if not user.is_authenticated %}
+    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
+        role="button">Register &raquo;</a>
+{% endif %}
+
 <!-- grid of books -->
 <p class="row-label">Python Programming</p>
 <div class="books-grid">
