@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
-
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 from django.db.models import Max

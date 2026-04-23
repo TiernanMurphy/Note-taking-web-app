@@ -22,5 +22,6 @@ urlpatterns = [
     path('delete_topic/<int:topic_id>/', views.delete_topic, name='delete_topic'),
     # Edit an existing topic
     path('edit_topic/<int:topic_id>/', views.edit_topic, name='edit_topic'),
+    # Reorder topics
     path('reorder_topics/', views.reorder_topics, name='reorder_topics'),
 ]
