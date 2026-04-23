@@ -3,6 +3,8 @@ beautifulsoup4==4.14.3
 dj-database-url==3.0.1
 Django==4.2.30
 django-bootstrap4==25.2
+gunicorn==23.0.0
+packaging==26.1
 pi==0.1.2
 psycopg2-binary==2.9.12
 python-dotenv==1.2.1
