@@ -31,3 +31,22 @@ class Entry(models.Model):
     def __str__(self):
         """Return a string representation of the model"""
         return f"{self.text[:50]}..."
+
+
+class Book(models.Model):
+    """PDF book in library"""
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    genre = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
+    pdf_filename = models.CharField(max_length=255)
+    img_filename = models.CharField(max_length=255, blank=True)
+    
+    def __str__(self):
+        return self.title
+    
+    def get_pdf_url(self):
+        return f"learning_logs/pdfs/{self.pdf_filename}"
+    
+    def get_img_url(self):
+        return f"learning_logs/img/{self.img_filename}"
