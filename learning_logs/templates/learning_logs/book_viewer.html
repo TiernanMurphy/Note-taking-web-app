@@ -1,0 +1,133 @@
+{% extends "learning_logs/base.html" %}
+{% load static %}
+
+{% block page_header %}
+<style>
+    #pdf-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: calc(100vh - 150px);
+        /* full viewport minus space for title and controls */
+        overflow: hidden;
+    }
+
+    #pdf-container canvas {
+        border: 1px solid #ccc;
+        height: 100%;
+        width: auto;
+    }
+
+    #controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div id="pdf-container"></div>
+
+<div id="controls">
+    <button class="btn btn-secondary btn-sm" id="prev">&#8592; Prev</button>
+    <span id="page-info">Page <span id="current-page">1</span> of <span id="total-pages">?</span></span>
+    <button class="btn btn-secondary btn-sm" id="next">Next &#8594;</button>
+</div>
+<script type="module">
+    import * as pdfjsLib from "{% static 'learning_logs/pdfjs/pdf.mjs' %}";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'learning_logs/pdfjs/pdf.worker.mjs' %}";
+
+    const pdfUrl = "{% static book.get_pdf_url %}";
+    const saveUrl = "{% url 'learning_logs:save_progress' book.id %}";
+    const csrfToken = "{{ csrf_token }}";
+    let currentPage = {{ current_page }};
+    let totalPages = 0;
+    let pdfDoc = null;
+
+    const container = document.getElementById('pdf-container');
+    const currentPageEl = document.getElementById('current-page');
+    const totalPagesEl = document.getElementById('total-pages');
+
+    async function renderPage(pageNum) {
+        container.innerHTML = '';
+        const page = await pdfDoc.getPage(pageNum);
+
+        const containerHeight = container.clientHeight;
+        const unscaledViewport = page.getViewport({ scale: 1 });
+        const scale = containerHeight / unscaledViewport.height;
+
+        // Account for high-DPI screens
+        const pixelRatio = window.devicePixelRatio || 1;
+        const viewport = page.getViewport({ scale: scale * pixelRatio });
+
+        const canvas = document.createElement('canvas');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Scale canvas back down with CSS so it fits the container
+        canvas.style.height = `${viewport.height / pixelRatio}px`;
+        canvas.style.width = `${viewport.width / pixelRatio}px`;
+
+        container.appendChild(canvas);
+
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+        currentPageEl.textContent = pageNum;
+        saveProgress(pageNum);
+    }
+
+    async function saveProgress(page) {
+        await fetch(saveUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ page })
+        });
+    }
+
+    // Load the PDF
+    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+    loadingTask.promise.then(pdf => {
+        pdfDoc = pdf;
+        totalPages = pdf.numPages;
+        totalPagesEl.textContent = totalPages;
+        renderPage(currentPage);
+    });
+
+    document.getElementById('prev').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+        }
+    });
+
+    document.getElementById('next').addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage(currentPage);
+        }
+    });
+
+    // turn pages with arrow keys
+    document.addEventListener('keydown', (e) => {
+        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
+            e.preventDefault();  // stops page scrolling
+        }
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+            }
+        }
+    });
+</script>
+{% endblock page_header %}

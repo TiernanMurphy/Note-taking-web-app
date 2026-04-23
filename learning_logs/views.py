@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
-from .models import Topic, Entry, Book
+from .models import Topic, Entry, Book, ReadingProgress
 from .forms import TopicForm, EntryForm
 from django.db.models import Max, Q
 
@@ -175,3 +175,35 @@ def reorder_topics(request):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+    
+
+def book_viewer(request, book_id):
+    """Serve the PDF.js viewer for a specific book."""
+    book = get_object_or_404(Book, id=book_id)
+    
+    current_page = 1
+    if request.user.is_authenticated:
+        progress = ReadingProgress.objects.filter(
+            user=request.user, book=book
+        ).first()
+        if progress:
+            current_page = progress.current_page
+
+    context = {'book': book, 'current_page': current_page}
+    return render(request, 'learning_logs/book_viewer.html', context)
+
+
+@login_required
+@require_POST
+def save_progress(request, book_id):
+    """Save reading progress for a book."""
+    book = get_object_or_404(Book, id=book_id)
+    data = json.loads(request.body)
+    page = data.get('page', 1)
+
+    ReadingProgress.objects.update_or_create(
+        user=request.user,
+        book=book,
+        defaults={'current_page': page}
+    )
+    return JsonResponse({'status': 'success'})

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static 'learning_logs/css/styles.css' %}">
 
 {% if not user.is_authenticated %}
-    <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}" role="button">Register &raquo;</a>
+<a class="btn btn-lg btn-primary" href="{% url 'users:register' %}" role="button">Register &raquo;</a>
 {% endif %}
 
 <!-- Search input -->
@@ -15,19 +15,17 @@
 
 <!-- Grouped books -->
 {% for group in grouped_books %}
-    <p class="row-label">{{ group.genre }}</p>
-    <div class="books-grid">
-        {% for book in group.books %}
-            <div class="book-card"
-                data-title="{{ book.title|lower }}"
-                data-author="{{ book.author|lower }}"
-                data-genre="{{ book.genre|lower }}">
-                <a href="{% static book.get_pdf_url %}" target="_blank">
-                    <img src="{% static book.get_img_url %}" alt="{{ book.title }}">
-                </a>
-            </div>
-        {% endfor %}
+<p class="row-label">{{ group.genre }}</p>
+<div class="books-grid">
+    {% for book in group.books %}
+    <div class="book-card" data-title="{{ book.title|lower }}" data-author="{{ book.author|lower }}"
+        data-genre="{{ book.genre|lower }}">
+        <a href="{% url 'learning_logs:book_viewer' book.id %}" target="_blank">
+            <img src="{% static book.get_img_url %}" alt="{{ book.title }}">
+        </a>
     </div>
+    {% endfor %}
+</div>
 {% endfor %}
 
 <script>

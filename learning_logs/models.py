@@ -50,3 +50,16 @@ class Book(models.Model):
     
     def get_img_url(self):
         return f"learning_logs/img/{self.img_filename}"
+    
+class ReadingProgress(models.Model):
+    """User's progress on a Book"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    current_page = models.IntegerField(default=1)
+    last_read = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'book')  # one progress record per user per book
+
+    def __str__(self):
+        return f"{self.user.username} - {self.book.title} (p.{self.current_page})"
