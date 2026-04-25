@@ -27,6 +27,9 @@
                     <a class="nav-link {% if '/topics' in request.path %}active{% endif %}"
                         href="{% url 'learning_logs:topics' %}">Topics</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/chatbot' in request.path %}active{% endif %}"href="{% url 'learning_logs:chatbot' %}">📚 Ask the Library</a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}

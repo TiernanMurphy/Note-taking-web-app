@@ -1,0 +1,229 @@
+{% extends "learning_logs/base.html" %}
+{% load static %}
+
+{% block page_header %}
+<style>
+    #chat-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 150px);
+    }
+
+    #chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .message {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        line-height: 1.5;
+    }
+
+    .user-message {
+        background-color: #0d6efd;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .bot-message {
+        background-color: #f0f0f0;
+        color: #333;
+        align-self: flex-start;
+    }
+
+    #chat-input-area {
+        display: flex;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .bot-message h1,
+    .bot-message h2,
+    .bot-message h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    .bot-message ul,
+    .bot-message ol {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+
+    .bot-message p {
+        margin-bottom: 6px;
+    }
+
+    .bot-message p:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+<h4>📚 Ask anything about the books
+    <a href="{% url 'learning_logs:clear_chat' %}" class="btn btn-sm btn-outline-secondary ms-2">Clear history</a>
+</h4>
+
+<div id="chat-container">
+    <div id="chat-messages">
+        <div class="message bot-message">
+            Hi! I've read the books in this library. Ask me anything about them.
+        </div>
+    </div>
+    <div id="chat-input-area">
+        <label for="image-input" class="btn btn-outline-secondary mb-0" title="Attach image">
+            📎
+        </label>
+        <input type="file" id="image-input" accept="image/*" style="display: none;">
+        <div style="position: relative; flex: 1;">
+            <input type="text" id="user-input" class="form-control" placeholder="Ask a question about any book...">
+            <div id="image-preview"
+                style="display:none; position:absolute; bottom: 110%; left: 0; background:#fff; border:1px solid #ccc; border-radius:8px; padding:6px;">
+                <img id="preview-img" style="max-height:80px; border-radius:4px;">
+                <button id="remove-image"
+                    style="position:absolute; top:-6px; right:-6px; background:red; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; cursor:pointer;">✕</button>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="send-btn">Send</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+<script>
+    const messagesEl = document.getElementById('chat-messages');
+    const inputEl = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const csrfToken = "{{ csrf_token }}";
+    const conversationHistory = [];
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    let attachedImageBase64 = null;
+    let attachedImageType = null;
+
+    function addMessage(text, isUser) {
+        const div = document.createElement('div');
+        div.classList.add('message', isUser ? 'user-message' : 'bot-message');
+        if (isUser) {
+            div.textContent = text;
+        } else {
+            div.innerHTML = marked.parse(text);
+        }
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    // Load saved history AFTER functions are defined
+    const savedHistory = {{ chat_history|safe }};
+    savedHistory.forEach(msg => {
+        addMessage(msg.content, msg.role === 'user');
+        conversationHistory.push({ role: msg.role, content: msg.content });
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target.result;
+            attachedImageBase64 = result.split(',')[1];
+            attachedImageType = file.type;
+            previewImg.src = result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('remove-image').addEventListener('click', () => {
+        attachedImageBase64 = null;
+        attachedImageType = null;
+        imageInput.value = '';
+        imagePreview.style.display = 'none';
+    });
+
+    async function sendMessage() {
+        const message = inputEl.value.trim();
+        if (!message && !attachedImageBase64) return;
+
+        if (attachedImageBase64) {
+            const div = document.createElement('div');
+            div.classList.add('message', 'user-message');
+            div.style.display = 'flex';
+            div.style.flexDirection = 'column';
+            div.style.gap = '6px';
+            if (message) {
+                const textEl = document.createElement('span');
+                textEl.textContent = message;
+                div.appendChild(textEl);
+            }
+            const imgEl = document.createElement('img');
+            imgEl.src = previewImg.src;
+            imgEl.style.maxHeight = '120px';
+            imgEl.style.borderRadius = '6px';
+            div.appendChild(imgEl);
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        } else {
+            addMessage(message, true);
+        }
+
+        inputEl.value = '';
+        sendBtn.disabled = true;
+        conversationHistory.push({ role: 'user', content: message || 'Image attached' });
+
+        const thinking = document.createElement('div');
+        thinking.classList.add('message', 'bot-message');
+        thinking.textContent = 'Thinking...';
+        thinking.id = 'thinking';
+        messagesEl.appendChild(thinking);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+        try {
+            const response = await fetch("{% url 'learning_logs:chat_message' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    message,
+                    history: conversationHistory,
+                    image: attachedImageBase64,
+                    image_type: attachedImageType
+                })
+            });
+            const data = await response.json();
+            document.getElementById('thinking').remove();
+            addMessage(data.answer, false);
+            conversationHistory.push({ role: 'assistant', content: data.answer });
+
+            attachedImageBase64 = null;
+            attachedImageType = null;
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+        } catch (error) {
+            document.getElementById('thinking').remove();
+            addMessage('Sorry, something went wrong. Please try again.', false);
+        }
+
+        sendBtn.disabled = false;
+        inputEl.focus();
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+{% endblock page_header %}

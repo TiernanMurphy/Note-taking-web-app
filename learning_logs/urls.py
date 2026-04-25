@@ -26,4 +26,9 @@ urlpatterns = [
     path('reorder_topics/', views.reorder_topics, name='reorder_topics'),
     path('books/<int:book_id>/', views.book_viewer, name='book_viewer'),
     path('books/<int:book_id>/save_progress/', views.save_progress, name='save_progress'),
+    # Anthropic
+    path('chatbot/', views.chatbot, name='chatbot'),
+    path('chatbot/message/', views.chat_message, name='chat_message'),
+    # clear chat history
+    path('chatbot/clear/', views.clear_chat, name='clear_chat'),
 ]

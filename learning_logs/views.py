@@ -6,10 +6,17 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
-from .models import Topic, Entry, Book, ReadingProgress
+from .models import Topic, Entry, Book, ReadingProgress, ChatMessage
 from .forms import TopicForm, EntryForm
 from django.db.models import Max, Q
+import anthropic
+import os
+from sentence_transformers import SentenceTransformer
+from pgvector.django import L2Distance
+from .models import DocumentChunk
 
+
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def index(request):
     """The home page for Learning Log."""
@@ -19,6 +26,7 @@ def index(request):
         'Business & Entrepreneurship',
         'Investing & Personal Finance',
         'Productivity & Self Development',
+        'Textbooks',
     ]
 
     grouped_books = []
@@ -207,3 +215,102 @@ def save_progress(request, book_id):
         defaults={'current_page': page}
     )
     return JsonResponse({'status': 'success'})
+
+
+def chatbot(request):
+    """Chatbot page."""
+    return render(request, 'learning_logs/chatbot.html')
+
+
+@login_required
+@require_POST
+def chat_message(request):
+    data = json.loads(request.body)
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+    image_base64 = data.get('image')
+    image_type = data.get('image_type', 'image/jpeg')
+    print(f"Image received: {bool(image_base64)}, type: {image_type}")
+
+    if not user_message and not image_base64:
+        return JsonResponse({'error': 'No message provided'}, status=400)
+
+    question_embedding = embedding_model.encode(user_message or "describe this image").tolist()
+
+    chunks = DocumentChunk.objects.order_by(
+        L2Distance('embedding', question_embedding)
+    )[:15]
+
+    context = "\n\n".join([
+        f"From '{chunk.book.title}' (page {chunk.page_number}):\n{chunk.text}"
+        for chunk in chunks
+    ])
+
+    system_prompt = f"""You are a knowledgeable and conversational assistant for a digital library. 
+You have access to text extracted from the full contents of books in this library.
+For each question, you are given the most relevant passages retrieved from those books.
+Answer naturally and conversationally, as if you've read these books yourself.
+Be direct and confident. If a question isn't covered by the passages, say so honestly.
+When relevant, mention which book your answer comes from.
+
+Relevant passages:
+{context}"""
+
+    # Build current user message content
+    # Build messages with history
+    messages = []
+    # Include last 6 exchanges for context without getting too long
+    for msg in history[:-1][-6:]:
+        messages.append({'role': msg['role'], 'content': msg['content']})
+    
+    # build current message
+    if image_base64:
+        current_content = [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": image_type,
+                    "data": image_base64
+                }
+            },
+            {
+                "type": "text",
+                "text": user_message or "Please describe and explain this image."
+            }
+        ]
+    else:
+        current_content = user_message
+
+    # Add current question
+    messages.append({'role': 'user', 'content': current_content})
+
+    client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
+    response = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=1000,
+        system=system_prompt,
+        messages=messages
+    )
+
+    answer = response.content[0].text
+    
+    # save to database
+    ChatMessage.objects.create(user=request.user, role='user', content=user_message)
+    ChatMessage.objects.create(user=request.user, role='assistant', content=answer)
+    
+    return JsonResponse({'answer': answer})
+
+@login_required
+def clear_chat(request):
+    ChatMessage.objects.filter(user=request.user).delete()
+    return redirect('learning_logs:chatbot')
+
+
+def chatbot(request):
+    """Chatbot page."""
+    chat_history = []
+    if request.user.is_authenticated:
+        chat_history = ChatMessage.objects.filter(user=request.user).values('role', 'content')
+    context = {'chat_history': list(chat_history)}
+    return render(request, 'learning_logs/chatbot.html', context)

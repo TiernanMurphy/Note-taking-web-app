@@ -3,131 +3,218 @@
 
 {% block page_header %}
 <style>
+    body {
+        overflow: hidden;
+    }
+    #viewer-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 120px);
+    }
+    #toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 4px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 8px;
+    }
+    #toolbar strong {
+        flex: 1;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .page-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: #555;
+    }
+    .page-controls button {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 2px 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    .page-controls button:hover {
+        background: #f0f0f0;
+    }
+    #page-input {
+        width: 48px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 0.9rem;
+    }
     #pdf-container {
+        flex: 1;
+        overflow-y: scroll;
+        background: #525659;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        height: calc(100vh - 150px);
-        /* full viewport minus space for title and controls */
-        overflow: hidden;
+        gap: 8px;
     }
-
     #pdf-container canvas {
-        border: 1px solid #ccc;
-        height: 100%;
-        width: auto;
-    }
-
-    #controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        display: block;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 </style>
 
-<div id="pdf-container"></div>
-
-<div id="controls">
-    <button class="btn btn-secondary btn-sm" id="prev">&#8592; Prev</button>
-    <span id="page-info">Page <span id="current-page">1</span> of <span id="total-pages">?</span></span>
-    <button class="btn btn-secondary btn-sm" id="next">Next &#8594;</button>
+<div id="viewer-wrapper">
+    <div id="toolbar">
+        <strong>{{ book.title }}</strong>
+        <div class="page-controls">
+            <button id="prev">&#8592;</button>
+            <input type="number" id="page-input" value="{{ current_page }}" min="1">
+            <span id="total-pages-label">/ —</span>
+            <button id="next">&#8594;</button>
+        </div>
+    </div>
+    <div id="pdf-container"></div>
 </div>
+
 <script type="module">
     import * as pdfjsLib from "{% static 'learning_logs/pdfjs/pdf.mjs' %}";
-
     pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'learning_logs/pdfjs/pdf.worker.mjs' %}";
 
     const pdfUrl = "{% static book.get_pdf_url %}";
     const saveUrl = "{% url 'learning_logs:save_progress' book.id %}";
     const csrfToken = "{{ csrf_token }}";
+
     let currentPage = {{ current_page }};
     let totalPages = 0;
     let pdfDoc = null;
+    let scale = 1;
+    let saveTimeout = null;
+    const pixelRatio = window.devicePixelRatio || 1;
 
     const container = document.getElementById('pdf-container');
-    const currentPageEl = document.getElementById('current-page');
-    const totalPagesEl = document.getElementById('total-pages');
+    const pageInput = document.getElementById('page-input');
+    const totalPagesLabel = document.getElementById('total-pages-label');
+
+    // Calculate scale to fit container width
+    async function calcScale() {
+        const page = await pdfDoc.getPage(1);
+        const viewport = page.getViewport({ scale: 1 });
+        const containerWidth = container.clientWidth - 64;
+        const containerHeight = container.clientHeight - 32;
+        scale = containerWidth / viewport.width;
+
+        // Fit by width and height, use whichever is smaller
+        const scaleByWidth = containerWidth / viewport.width;
+        const scaleByHeight = containerHeight / viewport.height;
+        scale = Math.min(scaleByWidth, scaleByHeight);
+    }
+
+    async function renderAllPages() {
+        container.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const wrapper = document.createElement('div');
+            wrapper.id = `page-wrapper-${i}`;
+            container.appendChild(wrapper);
+        }
+        // Render pages in batches to avoid freezing
+        for (let i = 1; i <= totalPages; i++) {
+            await renderPage(i);
+        }
+    }
 
     async function renderPage(pageNum) {
-        container.innerHTML = '';
+        const wrapper = document.getElementById(`page-wrapper-${pageNum}`);
+        if (!wrapper) return;
         const page = await pdfDoc.getPage(pageNum);
-
-        const containerHeight = container.clientHeight;
-        const unscaledViewport = page.getViewport({ scale: 1 });
-        const scale = containerHeight / unscaledViewport.height;
-
-        // Account for high-DPI screens
-        const pixelRatio = window.devicePixelRatio || 1;
         const viewport = page.getViewport({ scale: scale * pixelRatio });
 
         const canvas = document.createElement('canvas');
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-
-        // Scale canvas back down with CSS so it fits the container
         canvas.style.height = `${viewport.height / pixelRatio}px`;
         canvas.style.width = `${viewport.width / pixelRatio}px`;
 
-        container.appendChild(canvas);
-
+        wrapper.appendChild(canvas);
         await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-        currentPageEl.textContent = pageNum;
-        saveProgress(pageNum);
     }
 
-    async function saveProgress(page) {
-        await fetch(saveUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,
-            },
-            body: JSON.stringify({ page })
-        });
+    function scrollToPage(pageNum) {
+        const wrapper = document.getElementById(`page-wrapper-${pageNum}`);
+        if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Load the PDF
-    const loadingTask = pdfjsLib.getDocument(pdfUrl);
-    loadingTask.promise.then(pdf => {
+    function debouncedSave(page) {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            fetch(saveUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ page })
+            });
+        }, 1500);
+    }
+
+    // Track visible page while scrolling
+    container.addEventListener('scroll', () => {
+        for (let i = 1; i <= totalPages; i++) {
+            const wrapper = document.getElementById(`page-wrapper-${i}`);
+            if (!wrapper) continue;
+            const rect = wrapper.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            if (rect.bottom > containerRect.top && rect.top < containerRect.bottom) {
+                if (currentPage !== i) {
+                    currentPage = i;
+                    pageInput.value = i;
+                    debouncedSave(i);
+                }
+                break;
+            }
+        }
+    });
+
+    // Load PDF
+    pdfjsLib.getDocument(pdfUrl).promise.then(async pdf => {
         pdfDoc = pdf;
         totalPages = pdf.numPages;
-        totalPagesEl.textContent = totalPages;
-        renderPage(currentPage);
+        totalPagesLabel.textContent = `/ ${totalPages}`;
+        pageInput.max = totalPages;
+        await calcScale();
+        await renderAllPages();
+        scrollToPage(currentPage);
     });
 
+    // Page input
+    pageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const page = Math.min(Math.max(parseInt(pageInput.value) || 1, 1), totalPages);
+            currentPage = page;
+            pageInput.value = page;
+            scrollToPage(page);
+        }
+    });
+
+    // Prev/Next
     document.getElementById('prev').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderPage(currentPage);
-        }
+        if (currentPage > 1) { currentPage--; pageInput.value = currentPage; scrollToPage(currentPage); }
     });
-
     document.getElementById('next').addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderPage(currentPage);
-        }
+        if (currentPage < totalPages) { currentPage++; pageInput.value = currentPage; scrollToPage(currentPage); }
     });
 
-    // turn pages with arrow keys
+    // Keyboard
     document.addEventListener('keydown', (e) => {
-        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
-            e.preventDefault();  // stops page scrolling
-        }
+        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) e.preventDefault();
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderPage(currentPage);
-            }
+            if (currentPage < totalPages) { currentPage++; pageInput.value = currentPage; scrollToPage(currentPage); }
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            if (currentPage > 1) {
-                currentPage--;
-                renderPage(currentPage);
-            }
+            if (currentPage > 1) { currentPage--; pageInput.value = currentPage; scrollToPage(currentPage); }
         }
     });
 </script>
+
 {% endblock page_header %}

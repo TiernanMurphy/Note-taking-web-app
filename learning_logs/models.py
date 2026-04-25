@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from pgvector.django import VectorField
 
 
 class Topic(models.Model):
@@ -63,3 +64,24 @@ class ReadingProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title} (p.{self.current_page})"
+    
+class DocumentChunk(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    text = models.TextField()
+    embedding = VectorField(dimensions=384)  # 384 is the size for the model we'll use
+    page_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.book.title} - chunk {self.id}"
+    
+class ChatMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20)  # 'user' or 'assistant'
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role} - {self.timestamp}"
