@@ -20,8 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # for finding assets on filesystem 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-] if (BASE_DIR / 'static').exists() else []
+    BASE_DIR / 'learning_logs' / 'static',
+]
 
 load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
