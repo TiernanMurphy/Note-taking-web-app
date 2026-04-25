@@ -3,5 +3,4 @@
 __pycache__/
 db.sqlite3
 .env
-learning_logs/static/learning_logs/pdfs/
 learning_logs/static/learning_logs/pdfjs/

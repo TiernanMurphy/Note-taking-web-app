@@ -137,7 +137,7 @@ USE_TZ = True
 
 
 # for urls
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 # safe default for long entries (not really necessary)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
