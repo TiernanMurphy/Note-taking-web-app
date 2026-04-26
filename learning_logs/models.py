@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from pgvector.django import VectorField
+from django.templatetags.static import static
 
 
 class Topic(models.Model):
@@ -47,10 +48,10 @@ class Book(models.Model):
         return self.title
     
     def get_pdf_url(self):
-        return f"learning_logs/pdfs/{self.pdf_filename}"
+        return static(f"learning_logs/pdfs/{self.pdf_filename}")
     
     def get_img_url(self):
-        return f"learning_logs/img/{self.img_filename}"
+        return static(f"learning_logs/img/{self.img_filename}")
     
 class ReadingProgress(models.Model):
     """User's progress on a Book"""

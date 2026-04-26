@@ -22,7 +22,7 @@
     <div class="book-card" data-title="{{ book.title|lower }}" data-author="{{ book.author|lower }}"
         data-genre="{{ book.genre|lower }}">
         <a href="{% url 'learning_logs:book_viewer' book.id %}" target="_blank">
-            <img src="{{ static_prefix }}{{ book.get_img_url }}" alt="{{ book.title }}">
+            <img src="{{ book.get_img_url }}" alt="{{ book.title }}">
         </a>
     </div>
     {% endfor %}

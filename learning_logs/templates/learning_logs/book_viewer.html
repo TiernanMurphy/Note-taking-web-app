@@ -85,7 +85,7 @@
     import * as pdfjsLib from "{% static 'learning_logs/pdfjs/pdf.mjs' %}";
     pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'learning_logs/pdfjs/pdf.worker.mjs' %}";
 
-    const pdfUrl = "{% static book.get_pdf_url %}";
+    const pdfUrl = "{{ book.get_pdf_url }}";
     const saveUrl = "{% url 'learning_logs:save_progress' book.id %}";
     const csrfToken = "{{ csrf_token }}";
 

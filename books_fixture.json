@@ -1,0 +1,155 @@
+[
+{
+  "model": "learning_logs.topic",
+  "pk": 1,
+  "fields": {
+    "text": "test?",
+    "date_added": "2026-04-23T06:22:21.489Z",
+    "order": 1,
+    "owner": 1
+  }
+},
+{
+  "model": "learning_logs.topic",
+  "pk": 2,
+  "fields": {
+    "text": "Learning Log",
+    "date_added": "2026-04-23T16:47:49.431Z",
+    "order": 2,
+    "owner": 1
+  }
+},
+{
+  "model": "learning_logs.entry",
+  "pk": 1,
+  "fields": {
+    "topic": 1,
+    "title": "test",
+    "text": "does this work? yes!",
+    "date_added": "2026-04-23T06:22:30.735Z",
+    "owner": 1
+  }
+},
+{
+  "model": "learning_logs.entry",
+  "pk": 2,
+  "fields": {
+    "topic": 2,
+    "title": "4/23 Plan (before Friday's presentation)",
+    "text": "Well first of all, I'd like to get an impressive library on here. I should probably check out some resources that have free PDFs in the public domain, instead of just thinking of books and searching for them. The content should be prioritized on business and technology, but there should be something for everybody. Besides cultivating that, some basic functions are needed:\r\n- search library of books\r\n- save progress of pdf you're reading\r\n- a \"recents\" or \"pinned\" section\r\n\r\nAdvanced Features\r\n- summaries for each book (AI generated), with Q&A style focused on main topics\r\n- chatbot that's trained on all these pdfs. ask for recommendations, comparisons, summaries, study questions, etc",
+    "date_added": "2026-04-23T16:51:47.534Z",
+    "owner": 1
+  }
+},
+{
+  "model": "learning_logs.entry",
+  "pk": 3,
+  "fields": {
+    "topic": 2,
+    "title": "books to include",
+    "text": "Finance / Investing\r\n- intelligent investor\r\n- poor charlie's almanack\r\n- little book of common sense investing\r\n- when genius failed\r\n- die with zero\r\n- the big short Michael Lewis\r\n\r\nProductivity & Self Development\r\n- subtle art of not giving a fuck\r\n- atomic habits\r\n- deep work \r\n- thinking fast & slow\r\n- algorithms to live by",
+    "date_added": "2026-04-23T16:57:55.550Z",
+    "owner": 1
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "role": "user",
+    "content": "what's zero to one about?",
+    "timestamp": "2026-04-25T04:46:21.565Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "role": "assistant",
+    "content": "# Zero to One\n\n**Zero to One** is Peter Thiel's book about how to build the future through innovation and entrepreneurship. The core idea is about creating something genuinely new—going from \"zero to one\"—rather than just copying what already exists and improving it incrementally (\"one to n\").\n\nThiel argues that most business competition focuses on doing the same thing slightly better, but the real breakthroughs come from doing something completely different that nobody else is doing. He explores how successful companies like PayPal, Google, and Facebook achieved this by identifying unique opportunities and building monopolies in new markets.\n\nThe book covers practical topics for entrepreneurs including:\n- How to identify valuable secrets about the world that others don't see\n- The importance of starting with a small group and dominating a niche market first\n- Why you should focus on the future rather than just copying competitors\n- The role of founder-led companies and company culture\n- How technology can create exponential growth\n\nThiel essentially argues that the world needs more true innovation—more people creating something from zero rather than incrementally improving the one—and the book is meant as both a guide and a philosophical argument for why that matters.\n\nUnfortunately, I don't have the actual text passages from the book to quote directly, but this captures the essence of what it's about. Is there a specific aspect of the book you'd like to know more about?",
+    "timestamp": "2026-04-25T04:46:21.570Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "role": "user",
+    "content": "what's some of the best advice from the intelligent investor?",
+    "timestamp": "2026-04-25T04:54:52.685Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "role": "assistant",
+    "content": "I appreciate the question, but I should be honest—I don't actually have passages from **The Intelligent Investor** loaded in my system right now, so I can't give you the specific advice from the book itself.\n\nHowever, I know it's Benjamin Graham's classic on value investing, and it's hugely influential. If you have questions about it or want me to discuss what you remember from reading it, I'm happy to do that! Or if you'd like me to look up passages from it, let me know and I can try to help.\n\nDo you have the book handy, or would you like to discuss investment principles more generally?",
+    "timestamp": "2026-04-25T04:54:52.691Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "role": "user",
+    "content": "tell me about the intelligent investor",
+    "timestamp": "2026-04-25T04:55:16.126Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "role": "assistant",
+    "content": "I appreciate you asking, but I need to be straightforward with you—I don't currently have passages from **The Intelligent Investor** loaded in my system, so I can't give you details directly from the book itself.\n\nI know it's Benjamin Graham's foundational work on value investing, first published in 1949, and it's considered one of the most important investment books ever written. Warren Buffett has called it \"the best book on investing ever written.\" But without the actual text in front of me, I don't want to give you information that might be inaccurate or incomplete.\n\nIf you have access to the book or passages from it, feel free to share them and I'd be happy to discuss what Graham says. Or if there are specific investing concepts or principles you're curious about, I can try to help with those in a more general way.\n\nIs there anything else I can help you with from the digital library?",
+    "timestamp": "2026-04-25T04:55:16.131Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "role": "user",
+    "content": "summarize the intelligent investor ?",
+    "timestamp": "2026-04-25T04:55:32.866Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 8,
+  "fields": {
+    "user": 1,
+    "role": "assistant",
+    "content": "I appreciate you asking, but I need to be consistent here—I don't have **The Intelligent Investor** available in my system right now, so I can't provide you with an accurate summary of the book.\n\nRather than give you information I'm not certain about, I think it's better to be honest about that limitation. If the book is available in the digital library, you might want to search for it directly, or if you have access to it elsewhere, I'd be happy to discuss specific passages or concepts from it with you.\n\nIs there another book from the library I can help you with, or would you like to know about something else?",
+    "timestamp": "2026-04-25T04:55:32.871Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 9,
+  "fields": {
+    "user": 1,
+    "role": "user",
+    "content": "what is Charlie Munger's background",
+    "timestamp": "2026-04-25T04:55:48.432Z"
+  }
+},
+{
+  "model": "learning_logs.chatmessage",
+  "pk": 10,
+  "fields": {
+    "user": 1,
+    "role": "assistant",
+    "content": "I don't have passages loaded about Charlie Munger's background right now, so I can't give you details from the books in this library about his life and career.\n\nThat said, I know he's Warren Buffett's long-time business partner at Berkshire Hathaway and is known for his investment philosophy and wisdom. But without the actual text in front of me, I don't want to give you incomplete or potentially inaccurate information.\n\nDo you have access to any of Munger's books or biographies in the library? If you share passages about him, I'd be happy to discuss them. Or if you're looking for information about him more generally, you might want to search the library's catalog to see what's available.\n\nIs there something specific about Munger's ideas or approach to investing you're curious about?",
+    "timestamp": "2026-04-25T04:55:48.437Z"
+  }
+}
+]
