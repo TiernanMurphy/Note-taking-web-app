@@ -186,19 +186,20 @@ def reorder_topics(request):
     
 
 def book_viewer(request, book_id):
-    """Serve the PDF.js viewer for a specific book."""
-    book = get_object_or_404(Book, id=book_id)
-    
-    current_page = 1
-    if request.user.is_authenticated:
-        progress = ReadingProgress.objects.filter(
-            user=request.user, book=book
-        ).first()
-        if progress:
-            current_page = progress.current_page
-
-    context = {'book': book, 'current_page': current_page}
-    return render(request, 'learning_logs/book_viewer.html', context)
+    try:
+        book = get_object_or_404(Book, id=book_id)
+        current_page = 1
+        if request.user.is_authenticated:
+            progress = ReadingProgress.objects.filter(
+                user=request.user, book=book
+            ).first()
+            if progress:
+                current_page = progress.current_page
+        context = {'book': book, 'current_page': current_page}
+        return render(request, 'learning_logs/book_viewer.html', context)
+    except Exception as e:
+        from django.http import HttpResponse
+        return HttpResponse(f"Error: {str(e)}", status=500)
 
 
 @login_required

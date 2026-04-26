@@ -89,7 +89,7 @@
     const saveUrl = "{% url 'learning_logs:save_progress' book.id %}";
     const csrfToken = "{{ csrf_token }}";
 
-    let currentPage = {{ current_page }};
+    let currentPage = {{ current_page|default:1 }};
     let totalPages = 0;
     let pdfDoc = null;
     let scale = 1;
