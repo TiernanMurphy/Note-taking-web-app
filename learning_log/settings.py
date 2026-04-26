@@ -18,16 +18,10 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# for finding assets on filesystem 
-STATICFILES_DIRS = [
-    BASE_DIR / 'learning_logs' / 'static',
-]
-
 load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# turn this off for users
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # just for testing, obviously not safe
 ALLOWED_HOSTS = ['*']
@@ -137,7 +131,7 @@ USE_TZ = True
 
 
 # for urls
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
 
 # safe default for long entries (not really necessary)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
