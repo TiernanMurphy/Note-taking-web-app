@@ -24,7 +24,8 @@ urlpatterns = [
     path('edit_topic/<int:topic_id>/', views.edit_topic, name='edit_topic'),
     # Reorder topics
     path('reorder_topics/', views.reorder_topics, name='reorder_topics'),
-    path('books/<int:book_id>/', views.book_viewer, name='book_viewer'),
+    # Book viewer
+    path('books/<int:book_id>/', views.viewer, name='viewer'),
     path('books/<int:book_id>/save_progress/', views.save_progress, name='save_progress'),
     # Anthropic
     path('chatbot/', views.chatbot, name='chatbot'),

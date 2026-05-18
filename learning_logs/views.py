@@ -21,12 +21,22 @@ embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 def index(request):
     """The home page for Learning Log."""
     genre_order = [
+        'Game of Thrones',
+        'Productivity & Self Development',
+        'Computer Science',
+        'Harry Potter',
         'Python Programming',
+        'Science Fiction',
         'C and Linux',
         'Business & Entrepreneurship',
         'Investing & Personal Finance',
-        'Productivity & Self Development',
-        'Textbooks',
+        'Web Development',
+        'Artificial Intelligence',
+        'Biographies',
+        'Health',
+        'Philosophy',
+        'Fantasy',
+        'History'
     ]
 
     grouped_books = []
@@ -185,7 +195,7 @@ def reorder_topics(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
     
 
-def book_viewer(request, book_id):
+def viewer(request, book_id):
     try:
         book = get_object_or_404(Book, id=book_id)
         current_page = 1
@@ -196,7 +206,7 @@ def book_viewer(request, book_id):
             if progress:
                 current_page = progress.current_page
         context = {'book': book, 'current_page': current_page}
-        return render(request, 'learning_logs/book_viewer.html', context)
+        return render(request, 'learning_logs/viewer.html', context)
     except Exception as e:
         from django.http import HttpResponse
         return HttpResponse(f"Error: {str(e)}", status=500)
@@ -231,17 +241,19 @@ def chat_message(request):
     history = data.get('history', [])
     image_base64 = data.get('image')
     image_type = data.get('image_type', 'image/jpeg')
+    pdf_base64 = data.get('pdf')
+    file_text = data.get('file_text')
+    file_name = data.get('file_name', 'file')
     print(f"Image received: {bool(image_base64)}, type: {image_type}")
 
-    if not user_message and not image_base64:
+    if not user_message and not image_base64 and not pdf_base64 and not file_text:
         return JsonResponse({'error': 'No message provided'}, status=400)
 
-    question_embedding = embedding_model.encode(user_message or "describe this image").tolist()
+    question_embedding = embedding_model.encode(user_message or "describe this file").tolist()
 
     chunks = DocumentChunk.objects.order_by(
         L2Distance('embedding', question_embedding)
     )[:15]
-
     context = "\n\n".join([
         f"From '{chunk.book.title}' (page {chunk.page_number}):\n{chunk.text}"
         for chunk in chunks
@@ -257,14 +269,13 @@ When relevant, mention which book your answer comes from.
 Relevant passages:
 {context}"""
 
-    # Build current user message content
     # Build messages with history
     messages = []
     # Include last 6 exchanges for context without getting too long
     for msg in history[:-1][-6:]:
         messages.append({'role': msg['role'], 'content': msg['content']})
     
-    # build current message
+    # build current message based on file type
     if image_base64:
         current_content = [
             {
@@ -280,6 +291,20 @@ Relevant passages:
                 "text": user_message or "Please describe and explain this image."
             }
         ]
+    elif pdf_base64:
+        current_content = [
+        {
+            "type": "document",
+            "source": {
+                "type": "base64",
+                "media_type": "application/pdf",
+                "data": pdf_base64
+            }
+        },
+        {"type": "text", "text": user_message or "Please summarize this document."}
+    ]
+    elif file_text:
+        current_content = f"{user_message}\n\nFile contents:\n```\n{file_text}\n```" if user_message else f"Contents of {file_name}:\n```\n{file_text}\n```"   
     else:
         current_content = user_message
 
@@ -297,8 +322,9 @@ Relevant passages:
     answer = response.content[0].text
     
     # save to database
-    ChatMessage.objects.create(user=request.user, role='user', content=user_message)
+    ChatMessage.objects.create(user=request.user, role='user', content=user_message or f'[{file_name}]')
     ChatMessage.objects.create(user=request.user, role='assistant', content=answer)
+
     
     return JsonResponse({'answer': answer})
 
