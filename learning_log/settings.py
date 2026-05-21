@@ -80,6 +80,7 @@ WSGI_APPLICATION = "learning_log.wsgi.application"
 
 
 # sets default database to PostgreSQL
+
 DATABASE_URL = "postgresql://postgres:FDFZRzlrLfLZAwJFSDAHMLuvlaBqDGsF@shortline.proxy.rlwy.net:55320/railway"
 
 if DATABASE_URL:

@@ -694,5 +694,89 @@
     "pdf_filename": "restaurant_universe.pdf",
     "img_filename": "restaurant_universe.jpg"
   }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 59,
+  "fields": {
+    "title": "Hackers and Painters - Big Ideas From the Computer Age",
+    "author": "Paul Graham",
+    "genre": "Computer Science",
+    "description": "",
+    "pdf_filename": "hackers_painters.pdf",
+    "img_filename": "hackers_painters.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 60,
+  "fields": {
+    "title": "The Pragmatic Programmer",
+    "author": "David Thomas, Andrew Hunt",
+    "genre": "Computer Science",
+    "description": "",
+    "pdf_filename": "pragmatic_programmer.pdf",
+    "img_filename": "pragmatic_programmer.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 61,
+  "fields": {
+    "title": "Life, the Universe, and Everything",
+    "author": "Douglas Adams",
+    "genre": "Science Fiction",
+    "description": "",
+    "pdf_filename": "universe_and_everything.pdf",
+    "img_filename": "universe_and_everything.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 62,
+  "fields": {
+    "title": "So Long, and Thanks for All the Fish",
+    "author": "Douglas Adams",
+    "genre": "Science Fiction",
+    "description": "",
+    "pdf_filename": "fish.pdf",
+    "img_filename": "fish.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 63,
+  "fields": {
+    "title": "Mostly Harmless",
+    "author": "Douglas Adams",
+    "genre": "Science Fiction",
+    "description": "",
+    "pdf_filename": "mostly_harmless.pdf",
+    "img_filename": "mostly_harmless.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 64,
+  "fields": {
+    "title": "The Foundation Trilogy - Isaac Asimov",
+    "author": "Isaac Asimov",
+    "genre": "Science Fiction",
+    "description": "",
+    "pdf_filename": "foundation_asimov.pdf",
+    "img_filename": "foundation_asimov.jpg"
+  }
+},
+{
+  "model": "learning_logs.book",
+  "pk": 65,
+  "fields": {
+    "title": "The Princess Bride",
+    "author": "William Goldman",
+    "genre": "Fantasy",
+    "description": "",
+    "pdf_filename": "princess_bride.pdf",
+    "img_filename": "princess_bride.jpg"
+  }
 }
 ]
