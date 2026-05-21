@@ -80,7 +80,7 @@ WSGI_APPLICATION = "learning_log.wsgi.application"
 
 
 # sets default database to PostgreSQL
-DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_URL = os.environ.get('DATABASE_URL');
 
 if DATABASE_URL:
     DATABASES = {
