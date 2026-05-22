@@ -1,9 +1,18 @@
+body {
+    background-color: black;
+}
+
+h4 {
+    color: #D4E4F0;
+}
+
 #chat-container {
-    max-width: 1200px;
+    max-width: 2000px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     height: calc(100vh - 150px);
+    color: #1A2744;
 }
 
 #chat-messages {
@@ -16,15 +25,16 @@
 }
 
 .message {
-    max-width: 75%;
+    max-width: 100%;
     padding: 10px 14px; 
     border-radius: 12px;
     line-height: 1.5;
+    color: #D4E4F0;
 }
 
 .user-message {
-    background-color: #0d6efd;
-    color: white;
+    background-color: #0E2D25;
+    color: #D4E4F0;
     align-self: flex-end;
 }
 
@@ -37,8 +47,7 @@
 }
 
 .bot-message {
-    background-color: #f0f0f0;
-    color: #333;
+    color: #D4E4F0;
     align-self: flex-start;
 }
 
@@ -46,6 +55,14 @@
     display: flex;
     gap: 10px;
     padding: 10px 0;
+    color: #0E2D25;
+
+}
+
+#user-input {
+    color: #caeada;
+    background-color: #0E2D25;
+    border-color: #1c3d30;
 }
 
 .bot-message h1,
