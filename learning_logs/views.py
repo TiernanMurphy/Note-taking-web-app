@@ -8,15 +8,35 @@ from django.views.decorators.http import require_POST
 import json
 from .models import Topic, Entry, Book, ReadingProgress, ChatMessage
 from .forms import TopicForm, EntryForm
-from django.db.models import Max, Q
+from django.db.models import Max
 import anthropic
 import os
-from sentence_transformers import SentenceTransformer
+from mlx_embeddings.utils import load
 from pgvector.django import L2Distance
 from .models import DocumentChunk
 
 
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+MODEL_NAME = "mlx-community/all-MiniLM-L6-v2-bf16"
+
+def encode_chunks(texts, model, tokenizer, batch_size=32):
+    all_embeddings = []
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i + batch_size]
+        inputs = tokenizer.batch_encode_plus(
+            batch,
+            return_tensors="mlx",
+            padding=True,
+            truncation=True,
+            max_length=512,
+        )
+        outputs = model(
+            inputs["input_ids"],
+            attention_mask=inputs["attention_mask"],
+        )
+        # mean-pooled + normalized — same as sentence-transformers for this model
+        all_embeddings.append(outputs.text_embeds)
+    import mlx.core as mx
+    return mx.concatenate(all_embeddings, axis=0)
 
 def index(request):
     """The home page for Learning Log."""
