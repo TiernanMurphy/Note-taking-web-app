@@ -5,7 +5,7 @@
 * Anthropic general purpose LLM trained on vector embeddings from PDF library.
 * This vector training means responses are very specific to the pdf library-- this was very helpful when I added my textbooks, and studied for finals. 
 
-##Fixes / TODO
+Fixes / TODO
 * configure chatbot to process more file types (.ipynb, .cpp, .json, etc)
 * let users sort / save conversations with LLM, cancel / edit responses
 * improve responsiveness on mobile and tablet
