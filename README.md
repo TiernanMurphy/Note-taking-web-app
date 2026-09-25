@@ -3,7 +3,12 @@
 * Minimal notetaking system based on Learning Logs project from Eric Mathes' Python Crash Course
 * Chatbot that can process text queries, pdf, png, js, py, and jpg file types.
 * Anthropic general purpose LLM trained on vector embeddings from PDF library.
-* This vector training means responses are very specific to the pdf library-- this was very helpful when I added my textbooks, and studied for finals. 
+* This vector training means responses are very specific to the pdf library-- this was very helpful when I added my textbooks, and studied for finals.
+
+Good Prompts to Try
+* explain the five layers of networking
+* what are symptoms of an ineffective organizational structure?
+* explain the Linux migration from init to systemd
 
 Fixes / TODO
 * configure chatbot to process more file types (.ipynb, .cpp, .json, etc)
